@@ -9,10 +9,8 @@ namespace MiraiSystem.Repositories
 {
     public class UserRepository : GenericRepository<User>, IUserRepository
     {
-        private readonly MiraiDBContext _context;
         public UserRepository(MiraiDBContext context) : base(context)
         {
-            _context = context;
         }
     }
 }

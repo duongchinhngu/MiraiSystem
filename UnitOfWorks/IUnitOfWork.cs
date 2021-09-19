@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace MiraiSystem.UnitOfWorks
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IDisposable
     {
         ShoesRepository ShoesRepository { get; }
-        ShoesImageRepository ShoesImageRepository { get; }
-        ConcreteShoesRepository InventoryShoesRepository { get; }
+        ProductImageRepository ProductImageRepository { get; }
+        OrderRepository OrderRepository { get; }
+        OrderItemRepository OrderItemRepository { get; }
         UserRepository UserRepository { get; }
         Task Commit();
         Task Rollback();

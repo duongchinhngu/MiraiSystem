@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using MiraiSystem.Dtos;
-using MiraiSystem.Dtos.ExtendedDtos;
 using MiraiSystem.Models;
-using MiraiSystem.Models.ExtendedModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +12,11 @@ namespace MiraiSystem.Mapping
     {
         public ModelToDtoProfile()
         {
-            CreateMap<Shoes, ShoesDto>().ReverseMap();
-            CreateMap<ConcreteShoes, ConcreteShoesDto>().ReverseMap();
-            CreateMap<ShoesImage, ShoesImageDto>().ReverseMap();
+            CreateMap<ProductImage, ProductImageDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
-            CreateMap<ExtendedConcreteShoes, ExtendedConcreteShoesDto>().ReverseMap();
+            CreateMap<Shoes, ShoesDto>().ReverseMap();
+            CreateMap<Order, OrderDto>().ReverseMap();
+            CreateMap<OrderItem, OrderItemDto>().ReverseMap();
         }
     }
 }

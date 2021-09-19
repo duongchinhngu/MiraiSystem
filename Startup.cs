@@ -11,16 +11,20 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+using MiraiSystem.Helpers.SortHelpers;
 using MiraiSystem.Models;
 using MiraiSystem.Services;
 using MiraiSystem.Services.IServices;
 using MiraiSystem.UnitOfWorks;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 namespace MiraiSystem
 {
     public class Startup
     {
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -31,9 +35,9 @@ namespace MiraiSystem
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IShoesService, ShoesService>();
-            services.AddScoped<IShoesImageService, ShoesImageService>();
-            services.AddScoped<IConcreteShoesService, ConcreteShoesService>();
+            services.AddScoped<IProductImageService, ProductImageService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPurchaseService, PurchaseService>();
         }
         #endregion
 
@@ -67,15 +71,28 @@ namespace MiraiSystem
         {
             services.AddDbContext<MiraiDBContext>(opts => opts.UseSqlServer(Configuration["ConnectionString:MiraiSystemDBConnection"]));
             // cors
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins, builder =>
+                {
+                    builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+                });
+            });
             // business service
             AddScopeToConfig(services);
             // mapper
             services.AddAutoMapper(typeof(Startup));
             // controller
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson(o => o.SerializerSettings.ReferenceLoopHandling =
+                Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             // swagger
             AddSwaggerToConfig(services);
+            //
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,6 +107,8 @@ namespace MiraiSystem
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseHttpsRedirection();
 

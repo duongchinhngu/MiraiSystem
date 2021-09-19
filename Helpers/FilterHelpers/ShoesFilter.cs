@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 
 namespace MiraiSystem.Helpers.FilterHelpers
 {
-    public class ShoesFilter : ProducFilter
+    public class ShoesFilter : FashionProductFilter
     {
-        [FromQuery(Name = "gender")]
-        public string Gender { get; set; } = "women";
+
         [FromQuery(Name = "size")]
-        public double Size { get; set; } = 10.0;
+        public decimal Size { get; set; } = 0.0m;
     }
 }

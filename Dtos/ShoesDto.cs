@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace MiraiSystem.Dtos
 {
-    public class ShoesDto : ProductDto
+    public class ShoesDto : FashionProductDto
     {
-        public string Colorway { get; set; }
-        public DateTime ReleasedDate { get; set; }
-       
+        public decimal Size { get; set; }
+        public ICollection<ProductImageDto> ProductImages { get; set; }
     }
 }

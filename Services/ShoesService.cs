@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using MiraiSystem.Dtos;
-using MiraiSystem.Dtos.ExtendedDtos;
 using MiraiSystem.Helpers.FilterHelpers;
 using MiraiSystem.Helpers.PagingHelpers;
 using MiraiSystem.Models;
@@ -30,10 +29,11 @@ namespace MiraiSystem.Services
             await _unitOfWork.Commit();
         }
 
-        public async Task<Response<ExtendedConcreteShoesDto>> Filter(ShoesFilter filter)
+        public Response<ShoesDto> Filter(ShoesFilter filter)
         {
-            var entities = await _unitOfWork.ShoesRepository.Filter(filter);
-            return new Response<ExtendedConcreteShoesDto>
+            PagedList<Shoes> entities = _unitOfWork.ShoesRepository.Filter(filter);
+            
+            return new Response<ShoesDto>
             {
                 TotalCount = entities.TotalCount,
                 CurrentPage = entities.CurrentPage,
@@ -41,17 +41,7 @@ namespace MiraiSystem.Services
                 HasNext = entities.HasNext,
                 HasPrevious = entities.HasPrevious,
                 PageSize = entities.PageSize,
-                Data = entities.Select(s => new ExtendedConcreteShoesDto
-                {
-                    Gender = s.Gender,
-                    Id = s.Id,
-                    MainImageUrl = s.MainImageUrl,
-                    Price = s.Price,
-                    Quantity = s.Quantity,
-                    ShoesId = s.ShoesId,
-                    ShoesName = s.ShoesName,
-                    Size = s.Size,
-                }).ToList()
+                Data = _mapper.Map<IEnumerable<ShoesDto>>(entities)
             };
         }
 
@@ -61,15 +51,16 @@ namespace MiraiSystem.Services
             return _mapper.Map<IEnumerable<ShoesDto>>(entities).ToList();
         }
 
-        public Task<ShoesDto> GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<ShoesDto> GetById(string id)
         {
             var entity = await _unitOfWork.ShoesRepository.GetById(id);
             return _mapper.Map<ShoesDto>(entity);
+        }
+
+        public async Task<IEnumerable<ShoesDto>> GetByModelCode(string modelCode)
+        {
+            var entities = await _unitOfWork.ShoesRepository.GetByModelCode(modelCode);
+            return _mapper.Map<IEnumerable<ShoesDto>>(entities);
         }
 
         public async Task Remove(ShoesDto dto)

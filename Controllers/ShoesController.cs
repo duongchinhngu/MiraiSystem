@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MiraiSystem.Dtos;
-using MiraiSystem.Dtos.ExtendedDtos;
 using MiraiSystem.Helpers.FilterHelpers;
 using MiraiSystem.Helpers.PagingHelpers;
+using MiraiSystem.Models;
 using MiraiSystem.Services.IServices;
+using AutoMapper;
+using MiraiSystem.Repositories;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,12 +32,12 @@ namespace MiraiSystem.Controllers
         }
 
         [HttpGet("filter")]
-        public async Task<ActionResult<Response<ExtendedConcreteShoesDto>>> GetAll([FromQuery] ShoesFilter filter)
+        public ActionResult<Response<ShoesDto>> Filter([FromQuery] ShoesFilter filter)
         {
             try
             {
-                var result = await _service.Filter(filter);
-                if(result.Data.Any())
+                var result = _service.Filter(filter);
+                if (result.Data.Any())
                 {
                     return Ok(result);
                 }
@@ -50,26 +52,60 @@ namespace MiraiSystem.Controllers
             }
         }
 
-        // GET api/<ShoesController>/5
+        [HttpGet("test")]
+        public IActionResult Get()
+        {
+            MiraiDBContext context = new MiraiDBContext();
+            //var students = context.Shoes.Include(s => s.ProductImages).FirstOrDefault();
+            //var shoes = context.Shoes.Select(s => s.GetShoes(s.ProductImages)).FirstOrDefault();
+            ShoesRepository repo = new ShoesRepository(context);
+            var result = repo.GetByModelCode("cd4487-100");
+            return Ok(result);
+        }
+
+        [HttpGet("item")]
+        public async Task<ActionResult<IEnumerable<ShoesDto>>> FilterByAttributes([FromQuery]ShoesDto shoesDto)
+        {
+            if(shoesDto == null)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                var result = await _service.GetByModelCode(shoesDto.ModelCode);
+                if(result.Any())
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<ShoesDto>> Get(string id)
         {
             return await _service.GetById(id);
         }
 
-        // POST api/<ShoesController>
         [HttpPost]
-        public async void Post(ShoesDto dto)
+        public async Task Post(ShoesDto dto)
         {
             await _service.Add(dto);
             NoContent();
         }
 
-        // PUT api/<ShoesController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, ShoesDto dto)
+        public async Task<IActionResult> Put(string sku, ShoesDto dto)
         {
-            if (id != dto.Id)
+            if (sku != dto.Sku)
             {
                 return BadRequest();
             }
@@ -80,7 +116,7 @@ namespace MiraiSystem.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (await _service.GetById(id) == null)
+                if (await _service.GetById(sku) == null)
                 {
                     return NotFound();
                 }

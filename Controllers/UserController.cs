@@ -35,7 +35,7 @@ namespace MiraiSystem.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public async void Post(UserDto dto)
+        public async Task Post(UserDto dto)
         {
             await _service.Add(dto);
             NoContent();

@@ -13,6 +13,6 @@ namespace MiraiSystem.Helpers.PagingHelpers
         public int TotalCount { get; set; }
         public bool HasPrevious { get; set; }
         public bool HasNext { get; set; }
-        public List<T> Data { get; set; }
+        public IEnumerable<T> Data { get; set; }
     }
 }

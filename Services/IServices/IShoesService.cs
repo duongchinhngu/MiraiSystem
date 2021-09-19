@@ -1,5 +1,4 @@
 ﻿using MiraiSystem.Dtos;
-using MiraiSystem.Dtos.ExtendedDtos;
 using MiraiSystem.Helpers.FilterHelpers;
 using MiraiSystem.Helpers.PagingHelpers;
 using System;
@@ -11,6 +10,7 @@ namespace MiraiSystem.Services.IServices
 {
     public interface IShoesService : IBaseService<ShoesDto>
     {
-        Task<Response<ExtendedConcreteShoesDto>> Filter(ShoesFilter filter);
+        Response<ShoesDto> Filter(ShoesFilter filter);
+        Task<IEnumerable<ShoesDto>> GetByModelCode(string modelCode);
     }
 }

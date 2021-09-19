@@ -1,7 +1,6 @@
 ﻿using MiraiSystem.Helpers.FilterHelpers;
 using MiraiSystem.Helpers.PagingHelpers;
 using MiraiSystem.Models;
-using MiraiSystem.Models.ExtendedModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +10,7 @@ namespace MiraiSystem.Repositories.IRepositories
 {
     public interface IShoesRepository : IGenericRepository<Shoes>
     {
-        Task<PagedList<ExtendedConcreteShoes>> Filter(ShoesFilter filter);
+        PagedList<Shoes> Filter(ShoesFilter filter);
+        Task<IEnumerable<Shoes>> GetByModelCode(string modelCode);
     }
 }

@@ -11,7 +11,6 @@ namespace MiraiSystem.Services.IServices
         Task Add(TDto dto);
         Task Update(TDto dto);
         Task Remove(TDto dto);
-        Task<TDto> GetById(int id);
         Task<TDto> GetById(string id);
         Task<IEnumerable<TDto>> GetAll();
     }
