@@ -11,6 +11,5 @@ namespace MiraiSystem.Repositories.IRepositories
     public interface IShoesRepository : IGenericRepository<Shoes>
     {
         PagedList<Shoes> Filter(ShoesFilter filter);
-        Task<IEnumerable<Shoes>> GetByModelCode(string modelCode);
     }
 }

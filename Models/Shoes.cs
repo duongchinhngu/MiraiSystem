@@ -47,5 +47,6 @@ namespace MiraiSystem.Models
             return this.Quantity > 0 && this.Status.Equals(INSTOCK_STATUS);
         }
 
+        
     }
 }

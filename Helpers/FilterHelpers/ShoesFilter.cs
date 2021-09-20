@@ -12,5 +12,6 @@ namespace MiraiSystem.Helpers.FilterHelpers
 
         [FromQuery(Name = "size")]
         public decimal Size { get; set; } = 0.0m;
+
     }
 }

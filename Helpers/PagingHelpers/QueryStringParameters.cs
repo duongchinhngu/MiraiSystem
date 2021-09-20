@@ -11,6 +11,7 @@ namespace MiraiSystem.Helpers.PagingHelpers
     public abstract class QueryStringParameters
     {
         const int maxPageSize = 50;
+
         [FromQuery(Name ="page-number")]
         public int PageNumber { get; set; } = 1;
 
@@ -25,6 +26,9 @@ namespace MiraiSystem.Helpers.PagingHelpers
         [FromQuery(Name = "order-by")]
         public String OrderBy { get; set; } = SortHelper<object>.DEFAULT_SORT;
         [FromQuery(Name = "sort-by")]
-        public abstract String SortBy { get; set; }
+        public abstract String SortBy { get; set; 
+
+        [FromQuery(Name = "q")]
+        public string Search { get; set; } = "";
     }
 }

@@ -18,15 +18,5 @@ namespace MiraiSystem.Repositories
         {
             _context = context;
         }
-
-        public async Task<IEnumerable<Shoes>> GetByModelCode(string modelCode)
-        {
-            return await _context.Shoes
-                .Where(s => s.ModelCode.Equals(modelCode))
-                .OrderBy(s => s.Gender)
-                .Select(s => s.GetShoes(s.ProductImages))
-                .ToListAsync();
-        }
-
     }
 }

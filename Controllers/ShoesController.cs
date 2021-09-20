@@ -21,17 +21,40 @@ namespace MiraiSystem.Controllers
     public class ShoesController : ControllerBase
     {
         private readonly IShoesService _service;
+
         public ShoesController(IShoesService service)
         {
             _service = service;
         }
+
         [HttpGet]
         public async Task<IEnumerable<ShoesDto>> GetAll()
         {
             return await _service.GetAll();
         }
 
-        [HttpGet("filter")]
+        //[HttpGet("test")]
+        //public IActionResult Test(ShoesFilter filter)
+        //{
+        //    try
+        //    {
+        //        var result = _service.Filter(filter);
+        //        if (result.Data.Any())
+        //        {
+        //            return Ok(result);
+        //        }
+        //        else
+        //        {
+        //            return NotFound();
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+        [HttpGet("item")]
         public ActionResult<Response<ShoesDto>> Filter([FromQuery] ShoesFilter filter)
         {
             try
@@ -48,43 +71,6 @@ namespace MiraiSystem.Controllers
             }
             catch (Exception)
             {
-                throw;
-            }
-        }
-
-        [HttpGet("test")]
-        public IActionResult Get()
-        {
-            MiraiDBContext context = new MiraiDBContext();
-            //var students = context.Shoes.Include(s => s.ProductImages).FirstOrDefault();
-            //var shoes = context.Shoes.Select(s => s.GetShoes(s.ProductImages)).FirstOrDefault();
-            ShoesRepository repo = new ShoesRepository(context);
-            var result = repo.GetByModelCode("cd4487-100");
-            return Ok(result);
-        }
-
-        [HttpGet("item")]
-        public async Task<ActionResult<IEnumerable<ShoesDto>>> FilterByAttributes([FromQuery]ShoesDto shoesDto)
-        {
-            if(shoesDto == null)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                var result = await _service.GetByModelCode(shoesDto.ModelCode);
-                if(result.Any())
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception)
-            {
-
                 throw;
             }
         }

@@ -15,29 +15,23 @@ namespace MiraiSystem.Repositories
     {
         public PagedList<Shoes> Filter(ShoesFilter filter)
         {
-            var entities = SearchAvailableShoes(filter);
+            var entities = SearchAvailableShoes(filter.Search);
+            //refactor here-----------------------------------------------------------------------------------
+            entities = entities.Where(s =>
+                    Shoes.IsLegalFashionGender(filter.Gender) ? 
+                        s.Gender.Equals(filter.Gender, StringComparison.OrdinalIgnoreCase) : true);
 
-            entities.Where(s => QueryByGender(filter, s));
+            entities = entities.Where(s => filter.Size == 0.0m ? true : s.Size == filter.Size);
 
-            entities.Where(s => QueryBySize(filter, s));
-
+            entities = entities.Where(s =>
+                        String.IsNullOrEmpty(filter.ModelCode) ? true :
+                            s.ModelCode.Equals(filter.ModelCode, StringComparison.OrdinalIgnoreCase));
+            //-------------------------------------------------------------------------------------------------
             GetShoeListContainsLowestPriceForEachSize(ref entities);
 
             entities = SortHelper<Shoes>.ApplySort(entities, filter.OrderBy, filter.SortBy);
 
-            entities.Select( s => s.GetShoes(s.ProductImages)).ToList();
-
             return PagedList<Shoes>.ToPagedList(entities, filter.PageNumber, filter.PageSize);
-        }
-
-        private static bool QueryBySize(ShoesFilter filter, Shoes s)
-        {
-            return filter.Size == 0 ? true : s.Size == filter.Size;
-        }
-
-        private bool QueryByGender(ShoesFilter filter, Shoes s)
-        {
-            return Shoes.IsLegalFashionGender(filter.Gender) ? s.Gender.Equals(filter.Gender, StringComparison.OrdinalIgnoreCase) : true;
         }
 
         void GetShoeListContainsLowestPriceForEachSize(ref IQueryable<Shoes> entities)
@@ -72,11 +66,11 @@ namespace MiraiSystem.Repositories
             }
         }
 
-        private IQueryable<Shoes> SearchAvailableShoes(ShoesFilter filter)
+        public IQueryable<Shoes> SearchAvailableShoes(string search)
         {
             return _context.Shoes
                             .Where(s => s.Quantity > 0 && s.Status.Equals(Shoes.INSTOCK_STATUS))
-                            .Where(s => s.Name.Contains(filter.Search));
+                            .Where(s => s.Name.Contains(search));
         }
     }
 }

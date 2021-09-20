@@ -57,12 +57,6 @@ namespace MiraiSystem.Services
             return _mapper.Map<ShoesDto>(entity);
         }
 
-        public async Task<IEnumerable<ShoesDto>> GetByModelCode(string modelCode)
-        {
-            var entities = await _unitOfWork.ShoesRepository.GetByModelCode(modelCode);
-            return _mapper.Map<IEnumerable<ShoesDto>>(entities);
-        }
-
         public async Task Remove(ShoesDto dto)
         {
             var entity = _mapper.Map<Shoes>(dto);

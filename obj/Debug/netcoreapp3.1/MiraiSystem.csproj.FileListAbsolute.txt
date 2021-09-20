@@ -66,10 +66,10 @@ C:\Users\DELL\source\repos\MiraiSystem\bin\Debug\netcoreapp3.1\runtimes\win\lib\
 C:\Users\DELL\source\repos\MiraiSystem\bin\Debug\netcoreapp3.1\System.Linq.Dynamic.Core.dll
 C:\Users\DELL\source\repos\MiraiSystem\bin\Debug\netcoreapp3.1\Humanizer.dll
 C:\Users\DELL\source\repos\MiraiSystem\bin\Debug\netcoreapp3.1\Microsoft.EntityFrameworkCore.Design.dll
-C:\Users\DELL\source\repos\MiraiSystem\obj\Debug\netcoreapp3.1\MiraiSystem.csprojAssemblyReference.cache
 C:\Users\DELL\source\repos\MiraiSystem\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.JsonPatch.dll
 C:\Users\DELL\source\repos\MiraiSystem\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 C:\Users\DELL\source\repos\MiraiSystem\bin\Debug\netcoreapp3.1\Newtonsoft.Json.Bson.dll
 C:\Users\DELL\source\repos\MiraiSystem\obj\Debug\netcoreapp3.1\MiraiSystem.csproj.CoreCompileInputs.cache
 C:\Users\DELL\source\repos\MiraiSystem\obj\Debug\netcoreapp3.1\MiraiSystem.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\DELL\source\repos\MiraiSystem\obj\Debug\netcoreapp3.1\MiraiSystem.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\DELL\source\repos\MiraiSystem\obj\Debug\netcoreapp3.1\MiraiSystem.csprojAssemblyReference.cache
