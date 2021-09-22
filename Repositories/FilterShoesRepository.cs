@@ -15,29 +15,25 @@ namespace MiraiSystem.Repositories
     {
         public PagedList<Shoes> Filter(ShoesFilter filter)
         {
-            var entities = SearchAvailableShoes(filter.Search);
-            //refactor here-----------------------------------------------------------------------------------
-            entities = entities.Where(s =>
-                    Shoes.IsLegalFashionGender(filter.Gender) ? 
-                        s.Gender.Equals(filter.Gender, StringComparison.OrdinalIgnoreCase) : true);
+            IQueryable<Shoes> entities = _context.Shoes.Where(s => s.Quantity > 0 && s.Status.Equals(Shoes.INSTOCK_STATUS));
 
-            entities = entities.Where(s => filter.Size == 0.0m ? true : s.Size == filter.Size);
+            SearchByName(ref entities, filter.Search);
 
-            entities = entities.Where(s =>
-                        String.IsNullOrEmpty(filter.ModelCode) ? true :
-                            s.ModelCode.Equals(filter.ModelCode, StringComparison.OrdinalIgnoreCase));
-            //-------------------------------------------------------------------------------------------------
-            GetShoeListContainsLowestPriceForEachSize(ref entities);
+            filter.ApplyFilter(ref entities);
 
-            entities = SortHelper<Shoes>.ApplySort(entities, filter.OrderBy, filter.SortBy);
+            if (String.IsNullOrEmpty(filter.ModelCode))
+            {
+                GetShoeListContainsLowestPriceForEachSize(ref entities);
+            }
+
+            filter.ApplySort(ref entities);
 
             return PagedList<Shoes>.ToPagedList(entities, filter.PageNumber, filter.PageSize);
         }
 
         void GetShoeListContainsLowestPriceForEachSize(ref IQueryable<Shoes> entities)
         {
-            IQueryable<Shoes> entitiesQueryable = GetPairOfStyleCodeAndLowestPriceList(entities);
-            IEnumerable<Shoes> pairOfStyleCodeAndLowestPriceList = entitiesQueryable.ToList<Shoes>();
+            IEnumerable<Shoes> pairOfStyleCodeAndLowestPriceList = GetPairOfStyleCodeAndLowestPriceList(entities);
             List<Shoes> resultEntitiesQueryable = new List<Shoes>();
             foreach (var pairOfStyleCodeAndLowestPrice in pairOfStyleCodeAndLowestPriceList)
             {
@@ -47,15 +43,15 @@ namespace MiraiSystem.Repositories
             entities = resultEntitiesQueryable.AsQueryable<Shoes>();
 
 
-            static IQueryable<Shoes> GetPairOfStyleCodeAndLowestPriceList(IQueryable<Shoes> entities)
+            static IEnumerable<Shoes> GetPairOfStyleCodeAndLowestPriceList(IQueryable<Shoes> entities)
             {
-                return (IQueryable<Shoes>)entities
+                return entities
                                   .GroupBy(s => s.ModelCode)
                                   .Select(a => new Shoes
                                   {
                                       ModelCode = a.Key,
                                       Price = a.Min(b => b.Price),
-                                  });
+                                  }).ToList();
             }
 
 
@@ -66,11 +62,9 @@ namespace MiraiSystem.Repositories
             }
         }
 
-        public IQueryable<Shoes> SearchAvailableShoes(string search)
+        public void SearchByName(ref IQueryable<Shoes> entities, string search)
         {
-            return _context.Shoes
-                            .Where(s => s.Quantity > 0 && s.Status.Equals(Shoes.INSTOCK_STATUS))
-                            .Where(s => s.Name.Contains(search));
+            entities = entities.Where(s => s.Name.Contains(search));
         }
     }
 }

@@ -29,6 +29,5 @@ namespace MiraiSystem.Models
         public static readonly string INSTOCK_STATUS = "InStock";
         public static readonly string OUTSTOCK_STATUS = "OutOfStock";
 
-
     }
 }

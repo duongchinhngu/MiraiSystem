@@ -19,5 +19,9 @@ namespace MiraiSystem.Dtos.BaseDtos
 
         [FromQuery(Name = "released-date")]
         public DateTime ReleasedDate { get; set; }
+
+        [FromQuery(Name = "condition")]
+        public string Condition { get; set; }
+
     }
 }

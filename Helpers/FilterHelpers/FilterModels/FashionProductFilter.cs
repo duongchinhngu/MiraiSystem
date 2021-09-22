@@ -9,6 +9,9 @@ namespace MiraiSystem.Helpers.FilterHelpers
     public class FashionProductFilter : ProductFilter
     {
         [FromQuery(Name = "gender")]
-        public string Gender { get; set; } = "all";
+        public string Gender { get; set; }
+        
+        [FromQuery(Name = "condition")]
+        public string Condition { get; set; }
     }
 }

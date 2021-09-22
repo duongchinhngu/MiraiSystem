@@ -20,7 +20,7 @@ namespace MiraiSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromQuery]OrderDto orderDto, [FromBody] List<OrderItemDto> orderItemDtos)
+        public async Task<IActionResult> Post([FromBody]OrderDto orderDto, [FromBody] List<OrderItemDto> orderItemDtos)
         {
             try
             {

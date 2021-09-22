@@ -33,27 +33,6 @@ namespace MiraiSystem.Controllers
             return await _service.GetAll();
         }
 
-        //[HttpGet("test")]
-        //public IActionResult Test(ShoesFilter filter)
-        //{
-        //    try
-        //    {
-        //        var result = _service.Filter(filter);
-        //        if (result.Data.Any())
-        //        {
-        //            return Ok(result);
-        //        }
-        //        else
-        //        {
-        //            return NotFound();
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
-        //}
-
         [HttpGet("item")]
         public ActionResult<Response<ShoesDto>> Filter([FromQuery] ShoesFilter filter)
         {

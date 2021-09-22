@@ -17,20 +17,20 @@ namespace MiraiSystem.Helpers.SortHelpers
         public static readonly string ASCENDING_SORT = "asc";
         public static readonly string DESCENDING_SORT = "desc";
         public static readonly string DEFAULT_SORT = "default";
-        public static IQueryable<T> ApplySort(IQueryable<T> entities, string orderBy, string sortBy)
+        public static void ApplySort( ref IQueryable<T> entities, string orderBy, string sortBy)
         {
             if (!entities.Any())
             {
-                return entities;
+                return;
             }
             if (String.IsNullOrWhiteSpace(orderBy) || String.IsNullOrWhiteSpace(sortBy))
             {
-                return entities;
+                return;
             }
 
             if (orderBy.Equals(DEFAULT_SORT))
             {
-                return entities;
+                return;
             }
 
             var propertyInfos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -40,26 +40,8 @@ namespace MiraiSystem.Helpers.SortHelpers
             var sortingOrder = orderBy.Contains(ASCENDING_SORT) ? "ascending" : "descending";
             sortQueryBuilder.Append($"{objectProperty.Name.ToString()} {sortingOrder}");
 
-            return entities.OrderBy(sortQueryBuilder.ToString());
+            entities = entities.OrderBy(sortQueryBuilder.ToString());
         }
 
-        public static IQueryable<Shoes> ApplyFilter(IQueryable<Shoes> entities, ShoesFilter filter)
-        {
-
-            var properties = filter.GetType().GetProperties();
-            var generalProperties = typeof(QueryStringParameters).GetProperties();
-
-            properties.Where(p => !generalProperties.Contains(p));
-
-            foreach (var property in properties)
-            {
-                var attributeValue = filter.GetType().GetProperty(property.Name).GetValue(filter, null);
-                if (attributeValue != null)
-                {
-                    entities.Where(s => s.GetType().GetProperty(property.Name).GetValue(filter, null) == attributeValue);
-                }
-            }
-            return entities;
-        }
     }
 }

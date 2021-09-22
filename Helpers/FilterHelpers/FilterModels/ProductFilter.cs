@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MiraiSystem.Helpers.FilterHelpers
 {
-    public class ProductFilter : QueryStringParameters
+    public class ProductFilter : GenericFilter
     {
         public override string SortBy { get; set; } = "price";
 
