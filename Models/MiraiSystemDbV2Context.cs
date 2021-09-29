@@ -17,19 +17,25 @@ namespace MiraiSystem.Models
         {
         }
 
-        public virtual DbSet<Brand> Brand { get; set; }
-        public virtual DbSet<Category> Categorie { get; set; }
-        //public virtual DbSet<FashionProduct> FashionProduct { get; set; }
-        public virtual DbSet<Order> Order { get; set; }
-        public virtual DbSet<OrderItem> OrderItem { get; set; }
-        public virtual DbSet<Permission> Permission { get; set; }
-        //public virtual DbSet<Product> Product { get; set; }
-        public virtual DbSet<ProductImage> ProductImage { get; set; }
-        public virtual DbSet<Role> Role { get; set; }
-        public virtual DbSet<RolePermission> RolePermission { get; set; }
+        public virtual DbSet<Address> Addresses { get; set; }
+        public virtual DbSet<Brand> Brands { get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<City> Cities { get; set; }
+        public virtual DbSet<Country> Countries { get; set; }
+        public virtual DbSet<District> Districts { get; set; }
+        public virtual DbSet<Membership> Memberships { get; set; }
+        public virtual DbSet<MembershipPrivilege> MembershipPrivileges { get; set; }
+        public virtual DbSet<Order> Orders { get; set; }
+        public virtual DbSet<OrderItem> OrderItems { get; set; }
+        public virtual DbSet<Permission> Permissions { get; set; }
+        public virtual DbSet<Privilege> Privileges { get; set; }
+        public virtual DbSet<ProductImage> ProductImages { get; set; }
+        public virtual DbSet<Promotion> Promotions { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<RolePermission> RolePermissions { get; set; }
         public virtual DbSet<Shoes> Shoes { get; set; }
-        public virtual DbSet<Transaction> Transaction { get; set; }
-        public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<Transaction> Transactions { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -162,11 +168,28 @@ namespace MiraiSystem.Models
                     .IsUnicode(false)
                     .HasColumnName("UserID");
 
+                entity.Property(e => e.PromotionID)
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("PromotionID");
+
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Order_User");
+
+                entity.HasOne(d => d.Promotion)
+                   .WithMany(p => p.Orders)
+                   .HasForeignKey(d => d.PromotionID)
+                   .OnDelete(DeleteBehavior.ClientSetNull)
+                   .HasConstraintName("FK_Order_Promotion");
+
+                entity.HasOne(d => d.Address)
+                   .WithMany(p => p.Orders)
+                   .HasForeignKey(d => d.ShippingAddressID)
+                   .OnDelete(DeleteBehavior.ClientSetNull)
+                   .HasConstraintName("FK_Order_Address");
             });
 
             modelBuilder.Entity<OrderItem>(entity =>
@@ -271,7 +294,7 @@ namespace MiraiSystem.Models
 
                 entity.ToTable("Shoes");
 
-                entity.Property(e => e.Size).HasColumnType("decimal(2, 1)");
+                entity.Property(e => e.Size).HasColumnType("decimal(3, 1)");
 
                 entity.Property(e => e.Sku)
                     .HasMaxLength(64)
@@ -539,19 +562,376 @@ namespace MiraiSystem.Models
                     .IsUnicode(false)
                     .HasColumnName("ID");
 
-                entity.Property(e => e.CreatedAt)
-                    .HasMaxLength(10)
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(2048)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Mode)
+                    .IsRequired()
+                    .HasMaxLength(20)
                     .IsFixedLength(true);
 
                 entity.Property(e => e.OrderId)
+                    .IsRequired()
                     .HasMaxLength(64)
                     .IsUnicode(false)
                     .HasColumnName("OrderID");
 
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Type)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
                 entity.Property(e => e.UserId)
+                    .IsRequired()
                     .HasMaxLength(64)
                     .IsUnicode(false)
                     .HasColumnName("UserID");
+
+                entity.HasOne(d => d.Order)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(d => d.OrderId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Transaction_Order");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Transaction_User");
+            });
+
+            modelBuilder.Entity<City>(entity =>
+            {
+                entity.ToTable("City");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.CountryCode)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(2048)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Country)
+                    .WithMany(p => p.Cities)
+                    .HasForeignKey(d => d.CountryCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_City_Country");
+            });
+
+            modelBuilder.Entity<Address>(entity =>
+            {
+                entity.ToTable("Address");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.Detail)
+                    .IsRequired()
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DistrictId)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("DistrictID");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("UserID");
+
+                entity.HasOne(d => d.District)
+                    .WithMany(p => p.Addresses)
+                    .HasForeignKey(d => d.DistrictId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Address_District");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Addresses)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Address_User");
+            });
+
+            modelBuilder.Entity<Country>(entity =>
+            {
+                entity.HasKey(e => e.Code);
+
+                entity.ToTable("Country");
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(2048)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DialCode)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<District>(entity =>
+            {
+                entity.ToTable("District");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.CityId)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("CityID");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.City)
+                    .WithMany(p => p.Districts)
+                    .HasForeignKey(d => d.CityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_District_City");
+            });
+
+            modelBuilder.Entity<Promotion>(entity =>
+            {
+                entity.ToTable("Promotion");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.Code)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasMaxLength(2048)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("UserID");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Promotions)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Promotion_User");
+            });
+
+            modelBuilder.Entity<MembershipPrivilege>(entity =>
+            {
+                entity.ToTable("MembershipPrivilege");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.CreatedBy)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.MembershipId)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("MembershipID");
+
+                entity.Property(e => e.PrivilegeId)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("PrivilegeID");
+
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.UpdatedBy)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Creator)
+                    .WithMany(p => p.CreatedMembershipPrivileges)
+                    .HasForeignKey(d => d.CreatedBy)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MembershipPrivilege_User");
+
+                entity.HasOne(d => d.Membership)
+                    .WithMany(p => p.MembershipPrivileges)
+                    .HasForeignKey(d => d.MembershipId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MembershipPrivilege_Membership");
+
+                entity.HasOne(d => d.Privilege)
+                    .WithMany(p => p.MembershipPrivileges)
+                    .HasForeignKey(d => d.PrivilegeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MembershipPrivilege_Privilege");
+
+                entity.HasOne(d => d.Editor)
+                    .WithMany(p => p.UpdatedMembershipPrivileges)
+                    .HasForeignKey(d => d.UpdatedBy)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MembershipPrivilege_User1");
+            });
+
+            modelBuilder.Entity<Privilege>(entity =>
+            {
+                entity.ToTable("Privilege");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.CreatedBy)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(2048)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.UpdatedBy)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Creator)
+                    .WithMany(p => p.CreatedPrivileges)
+                    .HasForeignKey(d => d.CreatedBy)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Privilege_User");
+
+                entity.HasOne(d => d.Editor)
+                    .WithMany(p => p.UpdatedPrivileges)
+                    .HasForeignKey(d => d.UpdatedBy)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Privilege_User1");
+            });
+
+            modelBuilder.Entity<Membership>(entity =>
+            {
+                entity.ToTable("Membership");
+
+                entity.Property(e => e.Id)
+                    .HasMaxLength(64)
+                    .IsUnicode(false)
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.CreatedBy)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(2048)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PointRate).HasColumnType("decimal(2, 1)");
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpdatedBy)
+                    .IsRequired()
+                    .HasMaxLength(64)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Creator)
+                    .WithMany(p => p.CreatedMemberships)
+                    .HasForeignKey(d => d.CreatedBy)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Membership_User");
+
+                entity.HasOne(d => d.Editor)
+                    .WithMany(p => p.UpdatedMemberships)
+                    .HasForeignKey(d => d.UpdatedBy)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Membership_User1");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -576,10 +956,27 @@ namespace MiraiSystem.Models
                     .HasMaxLength(128)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Gender)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Lastname)
                     .IsRequired()
                     .HasMaxLength(128)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Phone)
+                    .IsRequired()
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProfileUrl)
+                    .IsRequired()
+                    .HasMaxLength(2048)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RegisteredAt).HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.RoleId)
                     .IsRequired()

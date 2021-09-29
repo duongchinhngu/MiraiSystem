@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using MiraiSystem.Dtos;
+using MiraiSystem.Helpers.FilterHelpers.UserFilters;
+using MiraiSystem.Helpers.PagingHelpers;
 using MiraiSystem.Models;
 using MiraiSystem.Services.IServices;
 using MiraiSystem.UnitOfWorks;
@@ -27,15 +29,22 @@ namespace MiraiSystem.Services
             await _unitOfWork.Commit();
         }
 
+        public Response<UserDto> Filter(UserFilter filter)
+        {
+            var entities = _unitOfWork.UserRepository.Filter(filter);
+            return _mapper.Map<Response<UserDto>>(entities);
+        }
+
         public async Task<IEnumerable<UserDto>> GetAll()
         {
             var entities = await _unitOfWork.UserRepository.GetAll();
             return _mapper.Map<IEnumerable<UserDto>>(entities).ToList();
         }
 
-        public Task<UserDto> GetById(int id)
+        public async Task<UserDto> GetByEmail(string email)
         {
-            throw new NotImplementedException();
+            var entity = await _unitOfWork.UserRepository.GetByEmail(email);
+            return _mapper.Map<UserDto>(entity);
         }
 
         public async Task<UserDto> GetById(string id)

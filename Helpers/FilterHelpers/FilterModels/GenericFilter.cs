@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using MiraiSystem.Helpers.PagingHelpers;
+using MiraiSystem.Helpers.Parameters;
+using MiraiSystem.Helpers.SortHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +11,10 @@ using System.Threading.Tasks;
 
 namespace MiraiSystem.Helpers.FilterHelpers
 {
-    public abstract class GenericFilter : QueryStringParameters
+    public class GenericFilter : QueryStringParameters
     {
+        [FromQuery(Name = "q")]
+        public string Search { get; set; } = "";
         public override string SortBy { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public PropertyInfo[] GetFilterProperties()
-        {
-            var generalProperties = typeof(QueryStringParameters).GetProperties();
-            var properties = this.GetType().GetProperties();
-            properties = properties.Where(p => !generalProperties.Any(g => g.Name.Equals(p.Name))).ToArray();
-            return properties;
-        }
-
     }
 }

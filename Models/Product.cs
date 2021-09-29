@@ -14,12 +14,13 @@ namespace MiraiSystem.Models
         public string CategoryId { get; set; }
         public string BrandId { get; set; }
         public double Price { get; set; }
-        public decimal Quantity { get; set; }
+        public int Quantity { get; set; }
         public string ModelCode { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
+        public decimal Discount { get; set; }
 
         public virtual Brand Brand { get; set; }
         public virtual Category Category { get; set; }

@@ -1,5 +1,4 @@
-﻿using MiraiSystem.Helpers.SortHelpers;
-using MiraiSystem.Models;
+﻿using MiraiSystem.Models;
 using MiraiSystem.Repositories;
 using System;
 using System.Collections.Generic;
@@ -18,6 +17,8 @@ namespace MiraiSystem.UnitOfWorks
         public UserRepository UserRepository { get; private set; }
         public OrderRepository OrderRepository { get; private set; }
         public OrderItemRepository OrderItemRepository { get; private set; }
+        public TransactionRepository TransactionRepository { get; private set; }
+        public AddressRepository AddressRepository { get; private set; }
 
         public UnitOfWork(MiraiDBContext context)
         {
@@ -31,6 +32,8 @@ namespace MiraiSystem.UnitOfWorks
             UserRepository = new UserRepository(_context);
             OrderRepository = new OrderRepository(_context);
             OrderItemRepository = new OrderItemRepository(_context);
+            TransactionRepository = new TransactionRepository(_context);
+            AddressRepository = new AddressRepository(_context);
         }
 
         public async Task Commit()

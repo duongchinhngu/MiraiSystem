@@ -21,20 +21,28 @@ namespace MiraiSystem.Services
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task InsertOrderAndOrderItem(OrderDto order, List<OrderItemDto> orderItemDtos)
+        public async Task InsertOrderAndOrderItem(TransactionDto transactionDto, OrderDto orderDto, List<OrderItemDto> orderItemDtos)
         {
-            Order orderEntity = await AddOrder(order);
-            await AddOrderItemList(orderItemDtos, orderEntity);
+            Order order = await AddOrder(orderDto);
+            await AddOrderItemList(orderItemDtos, order);
             await UpdateShoesQuantity(orderItemDtos);
+            await AddTransaction(transactionDto, orderDto);
             await unitOfWork.Commit();
         }
 
-        private async Task AddOrderItemList(List<OrderItemDto> orderItemDtos, Order orderEntity)
+        private async Task AddTransaction(TransactionDto transactionDto, OrderDto orderDto)
+        {
+            transactionDto.OrderId = orderDto.Id;
+            Transaction transaction = mapper.Map<Transaction>(transactionDto);
+            await unitOfWork.TransactionRepository.Insert(transaction);
+        }
+
+        private async Task AddOrderItemList(List<OrderItemDto> orderItemDtos, Order order)
         {
             var orderItemEntities = mapper.Map<IEnumerable<OrderItem>>(orderItemDtos);
             foreach (var orderItem in orderItemEntities)
             {
-                orderItem.OrderId = orderEntity.Id;
+                orderItem.OrderId = order.Id;
                 await unitOfWork.OrderItemRepository.Insert(orderItem);
             }
         }
@@ -50,11 +58,11 @@ namespace MiraiSystem.Services
             }
         }
 
-        private async Task<Order> AddOrder(OrderDto order)
+        private async Task<Order> AddOrder(OrderDto orderDto)
         {
-            var orderEntity = mapper.Map<Order>(order);
-            await unitOfWork.OrderRepository.Insert(orderEntity);
-            return orderEntity;
+            var order = mapper.Map<Order>(orderDto);
+            await unitOfWork.OrderRepository.Insert(order);
+            return order;
         }
     }
 }

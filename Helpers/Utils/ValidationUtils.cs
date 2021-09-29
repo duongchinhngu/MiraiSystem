@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MiraiSystem.Helpers.Utils
 {
-    public class Utils
+    public partial class Utils
     {
         public static bool IsNullOrDefaultValue(Object value)
         {

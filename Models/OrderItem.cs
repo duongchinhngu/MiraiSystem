@@ -11,7 +11,7 @@ namespace MiraiSystem.Models
         public string Sku { get; set; }
         public string OrderId { get; set; }
         public double Price { get; set; }
-        public UInt16 Quantity { get; set; }
+        public int Quantity { get; set; }
         public DateTime UpdatedAt { get; set; }
         public string UpdatedBy { get; set; }
         public virtual Order Order { get; set; }

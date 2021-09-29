@@ -17,7 +17,7 @@ namespace MiraiSystem.Repositories
         }
          public async Task<IEnumerable<ProductImage>> GetBySku(string sku)
         {
-            return await _context.ProductImage.Where(i => i.Sku.Equals(sku)).ToListAsync();
+            return await _context.ProductImages.Where(i => i.Sku.Equals(sku)).ToListAsync();
         }
 
     }

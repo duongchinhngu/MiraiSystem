@@ -8,6 +8,6 @@ namespace MiraiSystem.Services.IServices
 {
     public interface IPurchaseService
     {
-        Task InsertOrderAndOrderItem(OrderDto order, List<OrderItemDto> orderItemDtos);
+        Task InsertOrderAndOrderItem(TransactionDto transactionDto, OrderDto order, List<OrderItemDto> orderItemDtos);
     }
 }

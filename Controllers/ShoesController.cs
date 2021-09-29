@@ -33,11 +33,22 @@ namespace MiraiSystem.Controllers
             return await _service.GetAll();
         }
 
-        [HttpGet("item")]
+        [HttpGet("result")]
         public ActionResult<Response<ShoesDto>> Filter([FromQuery] ShoesFilter filter)
         {
             try
             {
+
+                if (filter == null)
+                {
+                    return BadRequest("Filter is null");
+                }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Filter has an invalid attribute");
+
+                }
+
                 var result = _service.Filter(filter);
                 if (result.Data.Any())
                 {
@@ -48,9 +59,9 @@ namespace MiraiSystem.Controllers
                     return NotFound();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                return StatusCode(500, "Inner exceptions: " + e.Message);
             }
         }
 
@@ -61,10 +72,25 @@ namespace MiraiSystem.Controllers
         }
 
         [HttpPost]
-        public async Task Post(ShoesDto dto)
+        public async Task<IActionResult> Post(ShoesDto dto)
         {
-            await _service.Add(dto);
-            NoContent();
+            try
+            {
+                if( dto == null)
+                {
+                    return BadRequest("Shoes is null");
+                }
+                if ( !ModelState.IsValid)
+                {
+                    return BadRequest("There is an invalid attribute of request object");
+                }
+                await _service.Add(dto);
+                return Created("", dto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
         }
 
         [HttpPut("{id}")]

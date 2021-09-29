@@ -13,5 +13,8 @@ namespace MiraiSystem.Helpers.FilterHelpers
 
         [FromQuery(Name = "model-code")]
         public string ModelCode { get; set; }
+
+        [FromQuery(Name = "status")]
+        public string Status { get; set; }
     }
 }

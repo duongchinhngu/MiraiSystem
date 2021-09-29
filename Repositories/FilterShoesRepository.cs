@@ -1,6 +1,6 @@
 ﻿using MiraiSystem.Helpers.FilterHelpers;
 using MiraiSystem.Helpers.PagingHelpers;
-using MiraiSystem.Helpers.SortHelpers;
+
 using MiraiSystem.Models;
 using MiraiSystem.Repositories.IRepositories;
 using System;
@@ -15,20 +15,20 @@ namespace MiraiSystem.Repositories
     {
         public PagedList<Shoes> Filter(ShoesFilter filter)
         {
-            IQueryable<Shoes> entities = _context.Shoes.Where(s => s.Quantity > 0 && s.Status.Equals(Shoes.INSTOCK_STATUS));
+            IQueryable<Shoes> entities = _context.Shoes.AsQueryable();
 
-            SearchByName(ref entities, filter.Search);
+            filter.ApplySearch(ref entities);
 
             filter.ApplyFilter(ref entities);
 
-            if (String.IsNullOrEmpty(filter.ModelCode))
+            if (!filter.IsLoadAll)
             {
                 GetShoeListContainsLowestPriceForEachSize(ref entities);
             }
 
             filter.ApplySort(ref entities);
 
-            return PagedList<Shoes>.ToPagedList(entities, filter.PageNumber, filter.PageSize);
+            return filter.ApplyPaging(entities);
         }
 
         void GetShoeListContainsLowestPriceForEachSize(ref IQueryable<Shoes> entities)
@@ -42,7 +42,6 @@ namespace MiraiSystem.Repositories
             }
             entities = resultEntitiesQueryable.AsQueryable<Shoes>();
 
-
             static IEnumerable<Shoes> GetPairOfStyleCodeAndLowestPriceList(IQueryable<Shoes> entities)
             {
                 return entities
@@ -54,17 +53,11 @@ namespace MiraiSystem.Repositories
                                   }).ToList();
             }
 
-
             Shoes GetSingleLowestPriceShoe(IQueryable<Shoes> entities, string model, double price)
             {
                 return entities.Where(s => s.ModelCode.Equals(model)
                 && s.Price == price).FirstOrDefault();
             }
-        }
-
-        public void SearchByName(ref IQueryable<Shoes> entities, string search)
-        {
-            entities = entities.Where(s => s.Name.Contains(search));
         }
     }
 }

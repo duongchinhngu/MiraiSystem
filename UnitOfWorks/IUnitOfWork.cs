@@ -13,6 +13,8 @@ namespace MiraiSystem.UnitOfWorks
         OrderRepository OrderRepository { get; }
         OrderItemRepository OrderItemRepository { get; }
         UserRepository UserRepository { get; }
+        TransactionRepository TransactionRepository { get; }
+        AddressRepository AddressRepository { get; }
         Task Commit();
         Task Rollback();
     }

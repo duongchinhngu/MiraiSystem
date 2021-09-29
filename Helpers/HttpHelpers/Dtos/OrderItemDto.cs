@@ -17,8 +17,8 @@ namespace MiraiSystem.Dtos
         [Range(0, double.MaxValue, ErrorMessage = "Price must be a positive double number.")]
         public double Price { get; set; }
         [Required]
-        [Range(1, UInt16.MaxValue, ErrorMessage = "Order Item quantity must be a positive double number greater than 1.")]
-        public UInt16 Quantity { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Order Item quantity must be a positive integer number greater than 1.")]
+        public int Quantity { get; set; }
         public DateTime UpdatedAt { get; set; }
         [Required(ErrorMessage = "UpdatedBy is an userId and required")]
         [StringLength(64, ErrorMessage = "UpdatedBy can't be longer than 64 characters")]

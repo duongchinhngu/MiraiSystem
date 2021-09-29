@@ -18,9 +18,16 @@ namespace MiraiSystem.Models
         public string Status { get; set; }
         public double SubTotal { get; set; }
         public double Total { get; set; }
+        public double GrandTotal { get; set; }
+        public string PromotionID { get; set; }
+        public string ShippingAddressID { get; set; }
 
         public virtual User User { get; set; }
+        public virtual Promotion Promotion { get; set; }
+        public virtual Address Address { get; set; }
         public virtual ICollection<OrderItem> OrderItems { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
+
 
         public override string ToString()
         {

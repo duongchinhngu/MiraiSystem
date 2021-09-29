@@ -7,11 +7,6 @@ namespace MiraiSystem.Models
 {
     public partial class Permission
     {
-        public Permission()
-        {
-            RolePermissions = new HashSet<RolePermission>();
-        }
-
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
